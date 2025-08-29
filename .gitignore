@@ -7,3 +7,5 @@ myenv/*
 myenv/
 data/iris.csv
 service-accounts.json
+.dvc/config
+.dvc/config.local
