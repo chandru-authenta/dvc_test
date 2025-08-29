@@ -5,8 +5,8 @@ stages:
     deps:
     - path: data/iris.csv
       hash: md5
-      md5: 013d0da08d6506664ce640459139176b
-      size: 3858
+      md5: ee5e6c3ad624ccf3a1ab6267d58b0976
+      size: 3807
     - path: params.yaml
       hash: md5
       md5: 4c529e15bee6112e746c04bf7a5c4865
@@ -18,11 +18,11 @@ stages:
     outs:
     - path: artifacts/confusion_matrix.csv
       hash: md5
-      md5: 4986ebbe00a15b96197e15bd3aa85841
+      md5: 5b440b21ea2a0905dff637774913b9bd
       size: 83
     - path: artifacts/model.pkl
       hash: md5
-      md5: 274210e8f833356e3feb2de62c5207f0
+      md5: ebd5f13c6cd6ffa6524322779ab95a11
       size: 957
     - path: metrics.json
       hash: md5
