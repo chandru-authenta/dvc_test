@@ -1,93 +1,93 @@
-name: CI - DVC Experiments
+# name: CI - DVC Experiments
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
+# on:
+#   push:
+#     branches: [ main ]
+#   pull_request:
 
-permissions:
-  contents: write
+# permissions:
+#   contents: write
 
-jobs:
-  train-and-track:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        test_size: [0.2, 0.3]
-        max_iter: [200, 500]
-        include:
-          - test_size: 0.25
-            max_iter: 300
-    env:
-      DVC_REMOTE: myremote
-      WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
-      WANDB_PROJECT: dvc-ml
-      MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
-      MLFLOW_EXPERIMENT_NAME: dvc-ml
+# jobs:
+#   train-and-track:
+#     runs-on: ubuntu-latest
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         test_size: [0.2, 0.3]
+#         max_iter: [200, 500]
+#         include:
+#           - test_size: 0.25
+#             max_iter: 300
+#     env:
+#       DVC_REMOTE: myremote
+#       WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+#       WANDB_PROJECT: dvc-ml
+#       MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+#       MLFLOW_EXPERIMENT_NAME: dvc-ml
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v4
+#         with:
+#           fetch-depth: 0
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+#       - name: Set up Python
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: "3.11"
 
-      - name: Cache pip
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: pip-${{ hashFiles('requirements.txt') }}
+#       - name: Cache pip
+#         uses: actions/cache@v4
+#         with:
+#           path: ~/.cache/pip
+#           key: pip-${{ hashFiles('requirements.txt') }}
 
-      - name: Install deps
-        run: |
-          python -m pip install --upgrade pip wheel
-          pip install -r requirements.txt
-          pip install dvc[gdrive]   # install gdrive support
+#       - name: Install deps
+#         run: |
+#           python -m pip install --upgrade pip wheel
+#           pip install -r requirements.txt
+#           pip install dvc[gdrive]   # install gdrive support
 
-      - name: Save service account JSON
-        run: |
-          echo '${{ secrets.GDRIVE_SERVICE_ACCOUNT_JSON }}' > service-accounts.json
+#       - name: Save service account JSON
+#         run: |
+#           echo '${{ secrets.GDRIVE_SERVICE_ACCOUNT_JSON }}' > service-accounts.json
 
-      - name: Configure DVC remote (Google Drive)
-        run: |
-          dvc remote add -d $DVC_REMOTE gdrive://<FOLDER_ID> || true
-          dvc remote modify $DVC_REMOTE gdrive_service_account_json service-accounts.json
+#       - name: Configure DVC remote (Google Drive)
+#         run: |
+#           dvc remote add -d $DVC_REMOTE gdrive://<FOLDER_ID> || true
+#           dvc remote modify $DVC_REMOTE gdrive_service_account_json service-accounts.json
 
-      - name: Pull data & previous artifacts
-        run: dvc pull -v
+#       - name: Pull data & previous artifacts
+#         run: dvc pull -v
 
-      - name: Run experiment (matrix)
-        run: |
-          dvc exp run \
-            -S train.test_size=${{ matrix.test_size }} \
-            -S train.max_iter=${{ matrix.max_iter }}
+#       - name: Run experiment (matrix)
+#         run: |
+#           dvc exp run \
+#             -S train.test_size=${{ matrix.test_size }} \
+#             -S train.max_iter=${{ matrix.max_iter }}
 
-      - name: Show experiments table
-        run: dvc exp show --no-pager --csv > exp_table.csv
+#       - name: Show experiments table
+#         run: dvc exp show --no-pager --csv > exp_table.csv
 
-      - name: Upload experiment table
-        uses: actions/upload-artifact@v4
-        with:
-          name: exp_table
-          path: exp_table.csv
+#       - name: Upload experiment table
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: exp_table
+#           path: exp_table.csv
 
-      - name: Push data/models to remote cache (GDrive)
-        run: dvc push -v
+#       - name: Push data/models to remote cache (GDrive)
+#         run: dvc push -v
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: model-and-plots
-          path: |
-            artifacts/model.pkl
-            artifacts/confusion_matrix.csv
-            metrics.json
+#       - name: Upload artifacts
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: model-and-plots
+#           path: |
+#             artifacts/model.pkl
+#             artifacts/confusion_matrix.csv
+#             metrics.json
 
-      - name: Push DVC experiments to Git
-        run: |
-          dvc exp push origin
+#       - name: Push DVC experiments to Git
+#         run: |
+#           dvc exp push origin

@@ -1,0 +1,30 @@
+schema: '2.0'
+stages:
+  train:
+    cmd: source myenv/bin/activate && python3 src/train.py
+    deps:
+    - path: data/iris.csv
+      hash: md5
+      md5: 013d0da08d6506664ce640459139176b
+      size: 3858
+    - path: params.yaml
+      hash: md5
+      md5: 4c529e15bee6112e746c04bf7a5c4865
+      size: 88
+    - path: src/train.py
+      hash: md5
+      md5: 60a21d45728171f082efd2d83b8fda39
+      size: 2270
+    outs:
+    - path: artifacts/confusion_matrix.csv
+      hash: md5
+      md5: 4986ebbe00a15b96197e15bd3aa85841
+      size: 83
+    - path: artifacts/model.pkl
+      hash: md5
+      md5: 274210e8f833356e3feb2de62c5207f0
+      size: 957
+    - path: metrics.json
+      hash: md5
+      md5: e7f2317581e33801866143686dc61bbe
+      size: 40
