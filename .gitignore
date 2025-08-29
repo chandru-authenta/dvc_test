@@ -1,0 +1,9 @@
+.artifacts
+__pycache__/
+*.pyc
+.DS_Store
+.dvc/cache/
+myenv/*
+myenv/
+data/iris.csv
+service-accounts.json
