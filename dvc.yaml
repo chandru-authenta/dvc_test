@@ -1,0 +1,13 @@
+stages:
+  train:
+    cmd: source myenv/bin/activate && python3 src/train.py
+    deps:
+    - data/iris.csv
+    - params.yaml
+    - src/train.py
+    outs:
+    - artifacts/confusion_matrix.csv
+    - artifacts/model.pkl
+    metrics:
+    - metrics.json:
+        cache: false

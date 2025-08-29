@@ -1,0 +1,5 @@
+pandas
+scikit-learn
+pyyaml
+dvc[s3]       
+dvc
